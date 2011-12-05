@@ -49,6 +49,8 @@ if __name__ == "__main__":
 
 	if len(sys.argv) < 4:
 		print 'Insufficient Arguments'
+		sys.exit('System will exit')
+		
 	dataFile 	= open(sys.argv[1],'r')
 	data		= dataFile.read()
 
