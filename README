@@ -1,0 +1,15 @@
+List of files:
+1. apriori.py
+2. INTEGRATED-DATASET.csv
+
+The dataset is a copy of the “Online directory of certified businesses with a detailed profile” file from the Small Business Services (SBS) 
+dataset in the NYC Open Data Sets which are freely available at http://nycopendata.socrata.com/
+
+It is a comma separated dataset.
+
+To run the program
+$ python apriori.py INTEGRATED-DATASET.csv minSupport minConfidence
+
+Best results are obtained for the following values of support and confidence:
+Support     : Between 0.1 and 0.2
+Confidence  : Between 0.5 and 0.7 
