@@ -4,18 +4,19 @@ Author 		: Abhinav Saini(abhi488@gmail.com)
 Credits		: Cesare Zavattari(cesare@ctrl-z-bg.org) for making suggestions and refactoring code
 
 Usage:
-	$python apriori.py DATASET.csv minSupport minConfidence
+	$python apriori.py -f DATASET.csv -s minSupport  -c minConfidence
 	
 	Eg.
-		$ python apriori.py DATASET.csv 0.15 0.6
+		$ python apriori.py -f DATASET.csv -s 0.15 -c 0.6
 
 """
 
 import sys
 import re
+
 from itertools	 import chain, combinations
 from collections import defaultdict
-
+from optparse 	 import OptionParser
 
 def subsets(arr):
     """ Returns non empty subsets of arr"""
@@ -111,10 +112,10 @@ def printResults(items, rules):
     """prints the generated itemsets and the confidence rules"""
     for item, support in items:
         print "item: %s , %.3f" % (str(item), support)
-    print "\n------------------------ rules:"
+    print "\n------------------------ RULES:"
     for rule, confidence in rules:
         pre, post = rule
-        print "rule: %s ==> %s , %.3f" % (str(pre), str(post), confidence)
+        print "Rule: %s ==> %s , %.3f" % (str(pre), str(post), confidence)
 
 
 def dataFromFile(fname):
@@ -129,14 +130,24 @@ def dataFromFile(fname):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) < 4:
-        print 	"""Insufficient Arguments\n
-		 Usage :\n
-		 \tpython apriori.py DATASET.csv minSupport minConfidence"""
-        sys.exit('System will exit')
-    
-    minSupport		= float(sys.argv[2])
-    minConfidence 	= float(sys.argv[3])
-    items, rules	= runApriori(dataFromFile(sys.argv[1]), minSupport, minConfidence)
+    optparser = OptionParser()
+    optparser.add_option('-f', '--inputFile', dest = 'input', help = 'the filename which contains the comma separated values', default=None)
+    optparser.add_option('-s', '--minSupport', dest='minS', help = 'minimum support value', default=0.15, type='float')
+    optparser.add_option('-c','--minConfidence', dest='minC', help = 'minimum confidence value', default = 0.6, type='float')
+
+    (options, args) = optparser.parse_args()
+
+    inFile = None
+    if options.input is None:
+	    inFile = sys.stdin
+    else if:
+	    inFile = dataFromFile(options.input)
+    else:
+	    print 'No dataset filename specified, system with exit\n'
+	    sys.exit('System will exit')
+
+    minSupport		= options.minS
+    minConfidence 	= options.minC
+    items, rules	= runApriori(inFile, minSupport, minConfidence)
 
     printResults(items,rules)
