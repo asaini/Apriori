@@ -140,7 +140,7 @@ if __name__ == "__main__":
     inFile = None
     if options.input is None:
 	    inFile = sys.stdin
-    else if:
+    elif options.input is not None:
 	    inFile = dataFromFile(options.input)
     else:
 	    print 'No dataset filename specified, system with exit\n'
