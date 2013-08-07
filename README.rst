@@ -25,3 +25,11 @@ Best results are obtained for the following values of support and confidence:
 Support     : Between 0.1 and 0.2  
 
 Confidence  : Between 0.5 and 0.7 
+
+License
+-------
+MIT-License 
+
+Disclaimer
+----------
+I do not actively work on this. Suggestions to improve are however welcome.
