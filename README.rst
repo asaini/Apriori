@@ -28,8 +28,6 @@ Confidence  : Between 0.5 and 0.7
 
 License
 -------
-MIT-License 
+MIT-License
 
-Disclaimer
-----------
-I do not actively work on this. Suggestions to improve are however welcome.
+-------
