@@ -12,7 +12,7 @@ dataset in the `NYC Open Data Sets <http://nycopendata.socrata.com/>`_
 
 Usage
 -----
-To run the program with dataset provided and default values for _minSupport_(0.15) and *minConfidence*(0.6)  
+To run the program with dataset provided and default values for *minSupport* = 0.15 and *minConfidence* = 0.6
 
     python apriori.py -f INTEGRATED-DATASET.csv
 
