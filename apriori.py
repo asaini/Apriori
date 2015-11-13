@@ -7,7 +7,7 @@ Usage:
     $python apriori.py -f DATASET.csv -s 0.15 -c 0.6
 """
 
-import sys
+import sys, os
 
 from itertools import chain, combinations
 from collections import defaultdict
@@ -113,14 +113,29 @@ def runApriori(data_iter, minSupport, minConfidence):
     return toRetItems, toRetRules
 
 
-def printResults(items, rules):
+def printResults(items, rules, stdout=True, _output_file=None):
     """prints the generated itemsets sorted by support and the confidence rules sorted by confidence"""
+    write = not _output_file is None
     for item, support in sorted(items, key=lambda (item, support): support):
-        print "item: %s , %.3f" % (str(item), support)
-    print "\n------------------------ RULES:"
+        sup_str = "item: %s , %.3f" % (str(item), support)
+        if stdout:  print sup_str
+        if write:
+            with open(_output_file, 'a') as of:
+                of.write(sup_str + os.linesep)
+    
+    page_del = os.linesep + "------------------------ RULES:"    
+    if stdout:  print page_del
+    if write:
+        with open(_output_file, 'a') as of:
+            of.write(page_del + os.linesep)
+
     for rule, confidence in sorted(rules, key=lambda (rule, confidence): confidence):
         pre, post = rule
-        print "Rule: %s ==> %s , %.3f" % (str(pre), str(post), confidence)
+        rule_write = "Rule: %s ==> %s , %.3f" % (str(pre), str(post), confidence)
+        if stdout:  print rule_write
+        if write:
+            with open(_output_file, 'a') as of:
+                of.write(rule_write + os.linesep)
 
 
 def dataFromFile(fname):
@@ -149,6 +164,16 @@ if __name__ == "__main__":
                          help='minimum confidence value',
                          default=0.6,
                          type='float')
+    optparser.add_option('-p', '--print',
+                         dest='stdout',
+                         help='hide printing to stdout. defaults to true if no outputfile provided (see -o)',
+                         default=True,
+                         action = 'store_false')
+    optparser.add_option('-o', '--outputFile',
+                         dest='output',
+                         help='output filename containing csv',
+                         default=None)
+
 
     (options, args) = optparser.parse_args()
 
@@ -161,9 +186,18 @@ if __name__ == "__main__":
             print 'No dataset filename specified, system with exit\n'
             sys.exit('System will exit')
 
+
+    _output_file = options.output
+    stdout = options.stdout
+    if not _output_file is None:
+        if not _output_file.endswith('.csv'):
+            raise Exception('output file must end with .csv')
+    else:  stdout = True
+
+
     minSupport = options.minS
     minConfidence = options.minC
 
     items, rules = runApriori(inFile, minSupport, minConfidence)
 
-    printResults(items, rules)
+    printResults(items, rules, stdout, _output_file)
