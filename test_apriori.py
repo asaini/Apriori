@@ -3,6 +3,7 @@ from itertools import chain
 import unittest
 
 from apriori import (
+    getItemSetTransactionList,
     joinSet,
     returnItemsWithMinSupport,
     subsets,
@@ -122,6 +123,26 @@ class AprioriTest(unittest.TestCase):
             frozenset(['beer', 'rice', 'apple'])
         ])
         self.assertEqual(result, expected)
+
+    def test_get_itemset_and_transaction_list_from_data_iterator(self):
+        data_iterator = [
+            frozenset(['beer', 'rice', 'apple', 'chicken']),
+            frozenset(['mango', 'beer']),
+        ]
+
+        itemSet, transactionList = getItemSetTransactionList(data_iterator)
+
+        expected = set([
+            frozenset(['chicken']),
+            frozenset(['apple']),
+            frozenset(['beer']),
+            frozenset(['rice']),
+            frozenset(['mango'])
+        ])
+        self.assertEqual(itemSet, expected)
+
+        expected = data_iterator
+        self.assertEqual(transactionList, expected)
 
 
 if __name__ == '__main__':
