@@ -175,16 +175,12 @@ class AprioriTest(unittest.TestCase):
             ]
             printResults(items, rules)
 
-            expected = "[(('milk',), 0.5), (('apple',), 0.5), (('beer',), "
-            expected += "0.75), (('rice',), 0.5), (('beer', 'rice'), "
-            expected += "0.5)]\n[((('beer',), ('rice',)), "
-            expected += "0.6666666666666666), ((('rice',), ('beer',)), "
-            expected += "1.0)]\nitem: ('milk',) , 0.500\nitem: ('apple',) , "
+            expected = "item: ('milk',) , 0.500\nitem: ('apple',) , "
             expected += "0.500\nitem: ('rice',) , 0.500\nitem: ('beer', "
             expected += "'rice') , 0.500\nitem: ('beer',) , 0.750\n\n"
-            expected += "------------------------ RULES:\nRule: "
-            expected += "('beer',) ==> ('rice',) , 0.667\nRule: ('rice',) "
-            expected += "==> ('beer',) , 1.000\n"
+            expected += "------------------------ RULES:\nRule: ('beer',) "
+            expected += "==> ('rice',) , 0.667\nRule: ('rice',) ==> "
+            expected += "('beer',) , 1.000\n"
             self.assertEqual(fake_output.getvalue(), expected)
 
 
