@@ -3,8 +3,9 @@ from itertools import chain
 import unittest
 
 from apriori import (
-    subsets,
+    joinSet,
     returnItemsWithMinSupport,
+    subsets,
 )
 
 
@@ -70,6 +71,57 @@ class AprioriTest(unittest.TestCase):
             }
         )
         self.assertEqual(freqSet, expected)
+
+    def test_join_set_and_get_two_element_itemsets(self):
+        itemSet = set([
+            frozenset(['apple']),
+            frozenset(['beer']),
+            frozenset(['chicken']),
+            frozenset(['mango']),
+            frozenset(['milk']),
+            frozenset(['rice'])
+        ])
+
+        result = joinSet(itemSet, 2)
+
+        expected = set([
+            frozenset(['chicken', 'mango']),
+            frozenset(['rice', 'apple']),
+            frozenset(['beer', 'apple']),
+            frozenset(['rice', 'milk']),
+            frozenset(['beer', 'rice']),
+            frozenset(['chicken', 'apple']),
+            frozenset(['beer', 'milk']),
+            frozenset(['chicken', 'rice']),
+            frozenset(['beer', 'mango']),
+            frozenset(['beer', 'chicken']),
+            frozenset(['apple', 'milk']),
+            frozenset(['mango', 'milk']),
+            frozenset(['mango', 'apple']),
+            frozenset(['rice', 'mango']),
+            frozenset(['chicken', 'milk'])
+        ])
+        self.assertEqual(result, expected)
+
+    def test_join_set_and_get_three_element_itemsets(self):
+        itemSet = set([
+            frozenset(['apple', 'beer']),
+            frozenset(['beer']),
+            frozenset(['chicken']),
+            frozenset(['mango']),
+            frozenset(['milk']),
+            frozenset(['rice'])
+        ])
+
+        result = joinSet(itemSet, 3)
+
+        expected = set([
+            frozenset(['beer', 'mango', 'apple']),
+            frozenset(['beer', 'apple', 'chicken']),
+            frozenset(['beer', 'apple', 'milk']),
+            frozenset(['beer', 'rice', 'apple'])
+        ])
+        self.assertEqual(result, expected)
 
 
 if __name__ == '__main__':
