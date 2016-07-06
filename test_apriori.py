@@ -1,9 +1,11 @@
 from collections import defaultdict
 from itertools import chain
+import os
 import unittest
 
 from apriori import (
     getItemSetTransactionList,
+    dataFromFile,
     joinSet,
     returnItemsWithMinSupport,
     subsets,
@@ -143,6 +145,17 @@ class AprioriTest(unittest.TestCase):
 
         expected = data_iterator
         self.assertEqual(transactionList, expected)
+
+    def test_read_data_from_file(self):
+        os.system('echo \'apple,beer,rice\' > test_apriori.csv')
+
+        result = dataFromFile('test_apriori.csv')
+        data = [each for each in result]
+
+        expected = frozenset(['beer', 'rice', 'apple'])
+        self.assertEqual(data[0], expected)
+
+        os.system('rm test_apriori.csv')
 
 
 if __name__ == '__main__':
