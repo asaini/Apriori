@@ -11,6 +11,7 @@ from apriori import (
     joinSet,
     printResults,
     returnItemsWithMinSupport,
+    runApriori,
     subsets,
 )
 
@@ -182,6 +183,40 @@ class AprioriTest(unittest.TestCase):
             expected += "==> ('rice',) , 0.667\nRule: ('rice',) ==> "
             expected += "('beer',) , 1.000\n"
             self.assertEqual(fake_output.getvalue(), expected)
+
+    def test_run_apriori_should_get_items_and_rules(self):
+        data = 'apple,beer,rice,chicken\n'
+        data += 'apple,beer,rice\n'
+        data += 'apple,beer\n'
+        data += 'apple,mango\n'
+        data += 'milk,beer,rice,chicken\n'
+        data += 'milk,beer,rice\n'
+        data += 'milk,beer\n'
+        data += 'milk,mango'
+        os.system('echo \'' + data + '\' > test_apriori.csv')
+
+        inFile = dataFromFile('test_apriori.csv')
+        minSupport = 0.5
+        minConfidence = 0.05
+
+        items, rules = runApriori(inFile, minSupport, minConfidence)
+
+        expected = [
+            (('milk',), 0.5),
+            (('apple',), 0.5),
+            (('beer',), 0.75),
+            (('rice',), 0.5),
+            (('beer', 'rice'), 0.5)
+        ]
+        self.assertEqual(items, expected)
+
+        expected = [
+            ((('beer',), ('rice',)), 0.6666666666666666),
+            ((('rice',), ('beer',)), 1.0)
+        ]
+        self.assertEqual(rules, expected)
+
+        os.system('rm test_apriori.csv')
 
 
 if __name__ == '__main__':
