@@ -1,5 +1,7 @@
 from collections import defaultdict
+from io import BytesIO as StringIO
 from itertools import chain
+from mock import patch
 import os
 import unittest
 
@@ -7,6 +9,7 @@ from apriori import (
     getItemSetTransactionList,
     dataFromFile,
     joinSet,
+    printResults,
     returnItemsWithMinSupport,
     subsets,
 )
@@ -156,6 +159,33 @@ class AprioriTest(unittest.TestCase):
         self.assertEqual(data[0], expected)
 
         os.system('rm test_apriori.csv')
+
+    def test_print_results_should_have_results_in_defined_format(self):
+        with patch('sys.stdout', new=StringIO()) as fake_output:
+            items = [
+                (('milk',), 0.5),
+                (('apple',), 0.5),
+                (('beer',), 0.75),
+                (('rice',), 0.5),
+                (('beer', 'rice'), 0.5)
+            ]
+            rules = [
+                ((('beer',), ('rice',)), 0.6666666666666666),
+                ((('rice',), ('beer',)), 1.0)
+            ]
+            printResults(items, rules)
+
+            expected = "[(('milk',), 0.5), (('apple',), 0.5), (('beer',), "
+            expected += "0.75), (('rice',), 0.5), (('beer', 'rice'), "
+            expected += "0.5)]\n[((('beer',), ('rice',)), "
+            expected += "0.6666666666666666), ((('rice',), ('beer',)), "
+            expected += "1.0)]\nitem: ('milk',) , 0.500\nitem: ('apple',) , "
+            expected += "0.500\nitem: ('rice',) , 0.500\nitem: ('beer', "
+            expected += "'rice') , 0.500\nitem: ('beer',) , 0.750\n\n"
+            expected += "------------------------ RULES:\nRule: "
+            expected += "('beer',) ==> ('rice',) , 0.667\nRule: ('rice',) "
+            expected += "==> ('beer',) , 1.000\n"
+            self.assertEqual(fake_output.getvalue(), expected)
 
 
 if __name__ == '__main__':
