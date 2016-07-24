@@ -1,7 +1,7 @@
 Python Implementation of Apriori Algorithm 
 ==========================================
 
-[![Build Status](https://travis-ci.org/zkan/Apriori.svg?branch=master)](https://travis-ci.org/zkan/Apriori)
+[![Build Status](https://travis-ci.org/asaini/Apriori.svg?branch=master)](https://travis-ci.org/asaini/Apriori)
 
 List of files
 -------------
