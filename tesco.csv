@@ -1,0 +1,8 @@
+apple,beer,rice,chicken
+apple,beer,rice
+apple,beer
+apple,mango
+milk,beer,rice,chicken
+milk,beer,rice
+milk,beer
+milk,mango
