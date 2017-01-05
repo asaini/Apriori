@@ -3,6 +3,10 @@ Python Implementation of Apriori Algorithm
 
 [![Build Status](https://travis-ci.org/asaini/Apriori.svg?branch=master)](https://travis-ci.org/asaini/Apriori)
 
+The code attempts to implement the following paper:
+
+> *Agrawal, Rakesh, and Ramakrishnan Srikant. "Fast algorithms for mining association rules." Proc. 20th int. conf. very large data bases, VLDB. Vol. 1215. 1994.*
+
 List of files
 -------------
 1. apriori.py
