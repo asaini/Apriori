@@ -28,7 +28,6 @@ def returnItemsWithMinSupport(itemSet, transactionList, minSupport, freqSet):
         for item in itemSet:
                 for transaction in transactionList:
                         if item.issubset(transaction):
-                                freqSet[item] += 1
                                 localSet[item] += 1
 
         for item, count in localSet.items():
@@ -36,6 +35,7 @@ def returnItemsWithMinSupport(itemSet, transactionList, minSupport, freqSet):
 
                 if support >= minSupport:
                         _itemSet.add(item)
+                        freqSet[item] = count;
 
         return _itemSet
 
