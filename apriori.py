@@ -107,9 +107,10 @@ def runApriori(data_iter, minSupport, minConfidence):
                 remain = item.difference(element)
                 if len(remain) > 0:
                     confidence = getSupport(item)/getSupport(element)
+                    lift = getSupport(item)/(getSupport(element)*getSupport(remain))
                     if confidence >= minConfidence:
                         toRetRules.append(((tuple(element), tuple(remain)),
-                                           confidence))
+                                           confidence,lift))
     return toRetItems, toRetRules
 
 
@@ -118,9 +119,9 @@ def printResults(items, rules):
     for item, support in sorted(items, key=lambda (item, support): support):
         print "item: %s , %.3f" % (str(item), support)
     print "\n------------------------ RULES:"
-    for rule, confidence in sorted(rules, key=lambda (rule, confidence): confidence):
+    for rule, confidence,lift in sorted(rules, key=lambda (rule, confidence, lift): confidence):
         pre, post = rule
-        print "Rule: %s ==> %s , %.3f" % (str(pre), str(post), confidence)
+        print "Rule: %s ==> %s , %.3f, %.3f" % (str(pre), str(post), confidence, lift)
 
 
 def dataFromFile(fname):
