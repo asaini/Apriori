@@ -70,9 +70,6 @@ def runApriori(data_iter, minSupport, minConfidence):
     # Global dictionary which stores (key=n-itemSets,value=support)
     # which satisfy minSupport
 
-    assocRules = dict()
-    # Dictionary which stores Association Rules
-
     oneCSet = returnItemsWithMinSupport(itemSet,
                                         transactionList,
                                         minSupport,
