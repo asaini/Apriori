@@ -11,13 +11,21 @@ st.sidebar.markdown(
 """
 )
 
-default_username = st.selectbox(
+default_csv = st.selectbox(
     "Select one of the sample csv files", ("INTEGRATED-DATASET.csv", "tesco.csv")
 )
 
-csv_file = pd.read_csv(default_username, header=None, sep="\n")
+if default_csv == 'INTEGRATED-DATASET.csv':
+    st.markdown('''The dataset is a copy of the “Online directory of certified businesses with a detailed profile” file from the 
+    Small Business Services (SBS) dataset in the NYC Open Data Sets http://nycopendata.socrata.com/''')
+elif default_csv == 'tesco.csv':
+    st.markdown('The dataset is a toy dataset contain frequently purchased grocery items')
+
+st.markdown('Here are some sample rows from the dataset')
+csv_file = pd.read_csv(default_csv, header=None, sep="\n")
 st.write(csv_file[0].str.split("\,", expand=True).head())
 
+st.markdown('---')
 st.markdown("## Inputs")
 
 st.markdown('''
@@ -36,7 +44,7 @@ confidence = st.slider(
     "Enter the Minimum Confidence Value", min_value=0.1, max_value=0.9, value=0.6
 )
 
-inFile = dataFromFile(default_username)
+inFile = dataFromFile(default_csv)
 
 items, rules = runApriori(inFile, support, confidence)
 
