@@ -1,2 +1,2 @@
 mock==2.0.0
-streamlit==0.71.0
+streamlit-nightly==0.78.1.dev20210315
