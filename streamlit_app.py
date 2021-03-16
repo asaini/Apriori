@@ -35,14 +35,16 @@ st.markdown('''
 
 st.markdown('Support and Confidence for Itemsets A and B can be represented by formulas')
 
-st.markdown(' > Support(A) = (Number of transactions in which A appears)/(Total Number of Transactions')
-st.markdown(' > Confidence(A->B) = Support(AUB)/Support(A)')
+support_helper = ''' > Support(A) = (Number of transactions in which A appears)/(Total Number of Transactions') '''
+confidence_helper = ''' > Confidence(A->B) = Support(AUB)/Support(A)') '''
 st.markdown('---')
 
-support = st.slider("Enter the Minimum Support Value", min_value=0.1, max_value=0.9, value=0.15)
-confidence = st.slider(
-    "Enter the Minimum Confidence Value", min_value=0.1, max_value=0.9, value=0.6
-)
+support = st.slider("Enter the Minimum Support Value", min_value=0.1,
+                    max_value=0.9, value=0.15,
+                    help=support_helper)
+
+confidence = st.slider("Enter the Minimum Confidence Value", min_value=0.1,
+                       max_value=0.9, value=0.6, help=confidence_helper)
 
 inFile = dataFromFile(default_csv)
 
