@@ -12,7 +12,7 @@ st.sidebar.markdown(
 )
 
 default_csv = st.selectbox(
-    "Select one of the sample csv files", ("INTEGRATED-DATASET.csv", "tesco.csv")
+    "Select one of the sample csv files", ("tesco.csv", "INTEGRATED-DATASET.csv")
 )
 
 if default_csv == 'INTEGRATED-DATASET.csv':
@@ -22,7 +22,7 @@ elif default_csv == 'tesco.csv':
     st.markdown('The dataset is a toy dataset contain frequently purchased grocery items')
 
 st.markdown('Here are some sample rows from the dataset')
-csv_file = pd.read_csv(default_csv, header=None, sep="\n")
+csv_file = pd.read_csv(default_csv, header=None, lineterminator="\n")
 st.write(csv_file[0].str.split("\,", expand=True).head())
 
 st.markdown('---')

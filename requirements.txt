@@ -1,2 +1,2 @@
 mock==2.0.0
-streamlit-0.79.0-py2.py3-none-any.whl
+streamlit
