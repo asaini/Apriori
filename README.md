@@ -9,15 +9,30 @@ Edit without local environment setup
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/asaini/Apriori)
 
 
+---
+
 ## Acknowledgements
 The code attempts to implement the following paper:
 
 > *Agrawal, Rakesh, and Ramakrishnan Srikant. "Fast algorithms for mining association rules." Proc. 20th int. conf. very large data bases, VLDB. Vol. 1215. 1994.*
 
+
+----
+
 Interactive Streamlit App
 -------------
 To view a live interactive app, and play with the input values, please click [here](https://share.streamlit.io/asaini/apriori/python3). This app was built using [Streamlit](https://www.streamlit.io) 😎, the source code for the app can be found [here](https://github.com/asaini/Apriori/blob/python3/streamlit_app.py)
 
+
+Running the Streamlit app locally
+-----
+To run the interactive Streamlit app with dataset  
+
+    $ pip3 install -r requirements.txt
+    $ streamlit run streamlit_app.py
+
+
+----
 
 CLI Usage
 -----
@@ -35,19 +50,25 @@ Support     : Between 0.1 and 0.2
 
 Confidence  : Between 0.5 and 0.7 
 
+----
 
-List of files
+Datasets
 -------------
-1. apriori.py
-2. INTEGRATED-DATASET.csv
-3. README(this file)
+
+#### INTEGRATED-DATASET.csv
 
 The dataset is a copy of the “Online directory of certified businesses with a detailed profile” file from the Small Business Services (SBS) 
 dataset in the `NYC Open Data Sets <http://nycopendata.socrata.com/>`_
 
 
+
+#### tesco.csv
+
+Toy dataset of items from shopping cart
+
+----
+
 License
 -------
 MIT-License
 
--------
