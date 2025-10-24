@@ -7,21 +7,48 @@ Usage:
     $python apriori.py -f DATASET.csv -s 0.15 -c 0.6
 """
 
+import argparse
+import logging
 import sys
-
-from itertools import chain, combinations
 from collections import defaultdict
-from optparse import OptionParser
+from itertools import chain, combinations
+from pathlib import Path
+from typing import Iterator, Optional
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logger = logging.getLogger(__name__)
 
 
-def subsets(arr):
-    """ Returns non empty subsets of arr"""
+def subsets(arr) -> chain:
+    """Returns non-empty subsets of arr.
+
+    Args:
+        arr: Input array to generate subsets from
+
+    Returns:
+        Chain iterator of all non-empty subsets
+    """
     return chain(*[combinations(arr, i + 1) for i, a in enumerate(arr)])
 
 
-def returnItemsWithMinSupport(itemSet, transactionList, minSupport, freqSet):
-    """calculates the support for items in the itemSet and returns a subset
-    of the itemSet each of whose elements satisfies the minimum support"""
+def returnItemsWithMinSupport(
+    itemSet: set[frozenset],
+    transactionList: list[frozenset],
+    minSupport: float,
+    freqSet: defaultdict
+) -> set[frozenset]:
+    """Calculates the support for items and returns subset meeting minimum support.
+
+    Args:
+        itemSet: Set of candidate itemsets
+        transactionList: List of all transactions
+        minSupport: Minimum support threshold (0.0-1.0)
+        freqSet: Frequency set to update with item counts
+
+    Returns:
+        Set of itemsets that meet the minimum support threshold
+    """
     _itemSet = set()
     localSet = defaultdict(int)
 
@@ -40,15 +67,30 @@ def returnItemsWithMinSupport(itemSet, transactionList, minSupport, freqSet):
     return _itemSet
 
 
-def joinSet(itemSet, length):
-    """Join a set with itself and returns the n-element itemsets"""
-    return set(
-        [i.union(j) for i in itemSet for j in itemSet if len(i.union(j)) == length]
-    )
+def joinSet(itemSet: set[frozenset], length: int) -> set[frozenset]:
+    """Join a set with itself and returns the n-element itemsets.
+
+    Args:
+        itemSet: Set of itemsets to join
+        length: Target length of joined itemsets
+
+    Returns:
+        Set of n-element itemsets
+    """
+    return {i.union(j) for i in itemSet for j in itemSet if len(i.union(j)) == length}
 
 
-def getItemSetTransactionList(data_iterator):
-    transactionList = list()
+def getItemSetTransactionList(data_iterator: Iterator) -> tuple[set[frozenset], list[frozenset]]:
+    """Extract itemsets and transaction list from data iterator.
+
+    Args:
+        data_iterator: Iterator yielding transaction records
+
+    Returns:
+        Tuple of (itemSet, transactionList) where itemSet contains all
+        1-itemsets and transactionList contains all transactions
+    """
+    transactionList = []
     itemSet = set()
     for record in data_iterator:
         transaction = frozenset(record)
@@ -58,12 +100,22 @@ def getItemSetTransactionList(data_iterator):
     return itemSet, transactionList
 
 
-def runApriori(data_iter, minSupport, minConfidence):
-    """
-    run the apriori algorithm. data_iter is a record iterator
-    Return both:
-     - items (tuple, support)
-     - rules ((pretuple, posttuple), confidence)
+def runApriori(
+    data_iter: Iterator,
+    minSupport: float,
+    minConfidence: float
+) -> tuple[list[tuple], list[tuple]]:
+    """Run the Apriori algorithm on transaction data.
+
+    Args:
+        data_iter: Iterator of transaction records
+        minSupport: Minimum support threshold (0.0-1.0)
+        minConfidence: Minimum confidence threshold (0.0-1.0)
+
+    Returns:
+        Tuple of (items, rules) where:
+        - items: List of (itemset_tuple, support)
+        - rules: List of ((antecedent_tuple, consequent_tuple), confidence)
     """
     itemSet, transactionList = getItemSetTransactionList(data_iter)
 
@@ -79,7 +131,7 @@ def runApriori(data_iter, minSupport, minConfidence):
 
     currentLSet = oneCSet
     k = 2
-    while currentLSet != set([]):
+    while currentLSet != set():
         largeSet[k - 1] = currentLSet
         currentLSet = joinSet(currentLSet, k)
         currentCSet = returnItemsWithMinSupport(
@@ -88,8 +140,15 @@ def runApriori(data_iter, minSupport, minConfidence):
         currentLSet = currentCSet
         k = k + 1
 
-    def getSupport(item):
-        """local function which Returns the support of an item"""
+    def getSupport(item: frozenset) -> float:
+        """Local function which returns the support of an item.
+
+        Args:
+            item: Itemset to calculate support for
+
+        Returns:
+            Support value (0.0-1.0)
+        """
         return float(freqSet[item]) / len(transactionList)
 
     toRetItems = []
@@ -109,77 +168,107 @@ def runApriori(data_iter, minSupport, minConfidence):
     return toRetItems, toRetRules
 
 
-def printResults(items, rules):
-    """prints the generated itemsets sorted by support and the confidence rules sorted by confidence"""
+def printResults(items: list[tuple], rules: list[tuple]) -> None:
+    """Prints the generated itemsets sorted by support and rules sorted by confidence.
+
+    Args:
+        items: List of (itemset, support) tuples
+        rules: List of ((antecedent, consequent), confidence) tuples
+    """
     for item, support in sorted(items, key=lambda x: x[1]):
-        print("item: %s , %.3f" % (str(item), support))
+        print(f"item: {item} , {support:.3f}")
     print("\n------------------------ RULES:")
     for rule, confidence in sorted(rules, key=lambda x: x[1]):
         pre, post = rule
-        print("Rule: %s ==> %s , %.3f" % (str(pre), str(post), confidence))
+        print(f"Rule: {pre} ==> {post} , {confidence:.3f}")
 
 
-def to_str_results(items, rules):
-    """prints the generated itemsets sorted by support and the confidence rules sorted by confidence"""
+def to_str_results(items: list[tuple], rules: list[tuple]) -> tuple[list[str], list[str]]:
+    """Converts itemsets and rules to string format for display.
+
+    Args:
+        items: List of (itemset, support) tuples
+        rules: List of ((antecedent, consequent), confidence) tuples
+
+    Returns:
+        Tuple of (item_strings, rule_strings) lists
+    """
     i, r = [], []
     for item, support in sorted(items, key=lambda x: x[1]):
-        x = "item: %s , %.3f" % (str(item), support)
+        x = f"item: {item} , {support:.3f}"
         i.append(x)
 
     for rule, confidence in sorted(rules, key=lambda x: x[1]):
         pre, post = rule
-        x = "Rule: %s ==> %s , %.3f" % (str(pre), str(post), confidence)
+        x = f"Rule: {pre} ==> {post} , {confidence:.3f}"
         r.append(x)
 
     return i, r
 
 
-def dataFromFile(fname):
-    """Function which reads from the file and yields a generator"""
-    with open(fname, "rU") as file_iter:
+def dataFromFile(fname: str | Path) -> Iterator[frozenset]:
+    """Function which reads from the file and yields a generator.
+
+    Args:
+        fname: Path to the input CSV file
+
+    Yields:
+        Frozenset of items for each transaction
+    """
+    file_path = Path(fname)
+    with file_path.open("r") as file_iter:
         for line in file_iter:
             line = line.strip().rstrip(",")  # Remove trailing comma
             record = frozenset(line.split(","))
             yield record
 
 
-if __name__ == "__main__":
-
-    optparser = OptionParser()
-    optparser.add_option(
-        "-f", "--inputFile", dest="input", help="filename containing csv", default=None
+def main() -> None:
+    """Main entry point for the Apriori CLI application."""
+    parser = argparse.ArgumentParser(
+        description="Simple Python implementation of the Apriori Algorithm"
     )
-    optparser.add_option(
+    parser.add_argument(
+        "-f",
+        "--inputFile",
+        dest="input",
+        help="filename containing csv",
+        default=None,
+        type=str,
+    )
+    parser.add_argument(
         "-s",
         "--minSupport",
         dest="minS",
         help="minimum support value",
         default=0.15,
-        type="float",
+        type=float,
     )
-    optparser.add_option(
+    parser.add_argument(
         "-c",
         "--minConfidence",
         dest="minC",
         help="minimum confidence value",
         default=0.6,
-        type="float",
+        type=float,
     )
 
-    (options, args) = optparser.parse_args()
+    args = parser.parse_args()
 
-    inFile = None
-    if options.input is None:
+    inFile: Optional[Iterator] = None
+    if args.input is None:
         inFile = sys.stdin
-    elif options.input is not None:
-        inFile = dataFromFile(options.input)
     else:
-        print("No dataset filename specified, system with exit\n")
-        sys.exit("System will exit")
+        inFile = dataFromFile(args.input)
 
-    minSupport = options.minS
-    minConfidence = options.minC
+    minSupport = args.minS
+    minConfidence = args.minC
 
+    logger.info(f"Running Apriori with minSupport={minSupport}, minConfidence={minConfidence}")
     items, rules = runApriori(inFile, minSupport, minConfidence)
 
     printResults(items, rules)
+
+
+if __name__ == "__main__":
+    main()

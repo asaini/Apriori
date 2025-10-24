@@ -1,13 +1,13 @@
-from collections import defaultdict
-from io import BytesIO as StringIO
-from itertools import chain
-from mock import patch
-import os
 import unittest
+from collections import defaultdict
+from io import StringIO
+from itertools import chain
+from pathlib import Path
+from unittest.mock import patch
 
 from apriori import (
-    getItemSetTransactionList,
     dataFromFile,
+    getItemSetTransactionList,
     joinSet,
     printResults,
     returnItemsWithMinSupport,
@@ -17,6 +17,16 @@ from apriori import (
 
 
 class AprioriTest(unittest.TestCase):
+    """Test cases for Apriori algorithm implementation."""
+
+    def setUp(self):
+        """Set up test fixtures before each test method."""
+        self.test_file = Path('test_apriori.csv')
+
+    def tearDown(self):
+        """Clean up test fixtures after each test method."""
+        if self.test_file.exists():
+            self.test_file.unlink()
     def test_subsets_should_return_empty_subsets_if_input_empty_set(self):
         result = tuple(subsets(frozenset([])))
 
@@ -151,15 +161,13 @@ class AprioriTest(unittest.TestCase):
         self.assertEqual(transactionList, expected)
 
     def test_read_data_from_file(self):
-        os.system('echo \'apple,beer,rice\' > test_apriori.csv')
+        self.test_file.write_text('apple,beer,rice\n')
 
-        result = dataFromFile('test_apriori.csv')
+        result = dataFromFile(self.test_file)
         data = [each for each in result]
 
         expected = frozenset(['beer', 'rice', 'apple'])
         self.assertEqual(data[0], expected)
-
-        os.system('rm test_apriori.csv')
 
     def test_print_results_should_have_results_in_defined_format(self):
         with patch('sys.stdout', new=StringIO()) as fake_output:
@@ -185,38 +193,40 @@ class AprioriTest(unittest.TestCase):
             self.assertEqual(fake_output.getvalue(), expected)
 
     def test_run_apriori_should_get_items_and_rules(self):
-        data = 'apple,beer,rice,chicken\n'
-        data += 'apple,beer,rice\n'
-        data += 'apple,beer\n'
-        data += 'apple,mango\n'
-        data += 'milk,beer,rice,chicken\n'
-        data += 'milk,beer,rice\n'
-        data += 'milk,beer\n'
-        data += 'milk,mango'
-        os.system('echo \'' + data + '\' > test_apriori.csv')
+        data = ('apple,beer,rice,chicken\n'
+                'apple,beer,rice\n'
+                'apple,beer\n'
+                'apple,mango\n'
+                'milk,beer,rice,chicken\n'
+                'milk,beer,rice\n'
+                'milk,beer\n'
+                'milk,mango\n')
+        self.test_file.write_text(data)
 
-        inFile = dataFromFile('test_apriori.csv')
+        inFile = dataFromFile(self.test_file)
         minSupport = 0.5
         minConfidence = 0.05
 
         items, rules = runApriori(inFile, minSupport, minConfidence)
 
-        expected = [
+        # Sort items by itemset for consistent comparison
+        items_sorted = sorted(items, key=lambda x: (len(x[0]), x[0]))
+        expected = sorted([
             (('milk',), 0.5),
             (('apple',), 0.5),
             (('beer',), 0.75),
             (('rice',), 0.5),
             (('beer', 'rice'), 0.5)
-        ]
-        self.assertEqual(items, expected)
+        ], key=lambda x: (len(x[0]), x[0]))
+        self.assertEqual(items_sorted, expected)
 
-        expected = [
+        # Sort rules for consistent comparison
+        rules_sorted = sorted(rules, key=lambda x: x[1])
+        expected_rules = sorted([
             ((('beer',), ('rice',)), 0.6666666666666666),
             ((('rice',), ('beer',)), 1.0)
-        ]
-        self.assertEqual(rules, expected)
-
-        os.system('rm test_apriori.csv')
+        ], key=lambda x: x[1])
+        self.assertEqual(rules_sorted, expected_rules)
 
 
 if __name__ == '__main__':
