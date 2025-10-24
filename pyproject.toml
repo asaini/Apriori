@@ -27,6 +27,7 @@ classifiers = [
 dependencies = [
     "streamlit>=1.0.0",
     "pandas>=1.0.0",
+    "black>=25.9.0",
 ]
 
 [project.optional-dependencies]

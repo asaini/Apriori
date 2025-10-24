@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Iterator, Optional
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -36,7 +36,7 @@ def returnItemsWithMinSupport(
     itemSet: set[frozenset],
     transactionList: list[frozenset],
     minSupport: float,
-    freqSet: defaultdict
+    freqSet: defaultdict,
 ) -> set[frozenset]:
     """Calculates the support for items and returns subset meeting minimum support.
 
@@ -101,9 +101,7 @@ def getItemSetTransactionList(data_iterator: Iterator) -> tuple[set[frozenset], 
 
 
 def runApriori(
-    data_iter: Iterator,
-    minSupport: float,
-    minConfidence: float
+    data_iter: Iterator, minSupport: float, minConfidence: float
 ) -> tuple[list[tuple], list[tuple]]:
     """Run the Apriori algorithm on transaction data.
 
@@ -134,9 +132,7 @@ def runApriori(
     while currentLSet != set():
         largeSet[k - 1] = currentLSet
         currentLSet = joinSet(currentLSet, k)
-        currentCSet = returnItemsWithMinSupport(
-            currentLSet, transactionList, minSupport, freqSet
-        )
+        currentCSet = returnItemsWithMinSupport(currentLSet, transactionList, minSupport, freqSet)
         currentLSet = currentCSet
         k = k + 1
 
