@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
 authors = [
-    {name = "Asaini", email = ""},
+    {name = "Asaini"},
 ]
 keywords = ["apriori", "data-mining", "association-rules", "machine-learning"]
 classifiers = [
