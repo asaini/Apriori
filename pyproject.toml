@@ -43,8 +43,6 @@ apriori = "apriori:main"
 [tool.setuptools]
 py-modules = ["apriori", "streamlit_app"]
 
-ignore = []
-
 [tool.pytest.ini_options]
 testpaths = ["test_apriori.py"]
 python_files = ["test_*.py"]
