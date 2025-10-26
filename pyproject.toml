@@ -48,4 +48,4 @@ testpaths = ["test_apriori.py"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "--verbose --cov=apriori --cov-report=term-missing"
+addopts = "--verbose"

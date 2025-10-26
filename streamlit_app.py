@@ -17,7 +17,7 @@ default_csv = st.selectbox(
 
 if default_csv == "INTEGRATED-DATASET.csv":
     st.markdown(
-        """The dataset is a copy of the “Online directory of certified businesses with a detailed profile” file from the 
+        """The dataset is a copy of the “Online directory of certified businesses with a detailed profile” file from the
     Small Business Services (SBS) dataset in the NYC Open Data Sets http://nycopendata.socrata.com/"""
     )
 elif default_csv == "tesco.csv":
@@ -33,7 +33,7 @@ st.markdown("## Inputs")
 st.markdown(
     """
             **Support** shows transactions with items purchased together in a single transaction.
-            
+
             **Confidence** shows transactions where the items are purchased one after the other."""
 )
 
