@@ -7,7 +7,7 @@ name = "apriori"
 version = "1.0.0"
 description = "Simple Python implementation of the Apriori Algorithm"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 license = "MIT"
 authors = [
     {name = "Asaini"},
